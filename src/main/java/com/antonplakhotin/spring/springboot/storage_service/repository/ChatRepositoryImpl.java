@@ -6,7 +6,7 @@ import com.antonplakhotin.spring.springboot.storage_service.entity.ChatPrompt;
 import com.antonplakhotin.spring.springboot.storage_service.entity.Prompt;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.jetbrains.annotations.NotNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,10 +14,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
 public class ChatRepositoryImpl implements ChatRepository {
 
     @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     @Override
     public Optional<Chat> getChat(Long chatId) {
@@ -26,7 +27,8 @@ public class ChatRepositoryImpl implements ChatRepository {
 
     @Override
     public List<Chat> getAllChats(String userId) {
-        return entityManager.createQuery("select c from Chat c WHERE c.userId = :userId", Chat.class).getResultList();
+        return entityManager.createQuery("SELECT c FROM Chat c WHERE c.userId = :userId", Chat.class)
+                .setParameter("userId", userId).getResultList();
     }
 
     @Override
@@ -36,9 +38,7 @@ public class ChatRepositoryImpl implements ChatRepository {
         chat.setUserId(createChatRq.getUserId());
         chat.setTitle(createChatRq.getTitle());
 
-        System.out.println("Before persist - Chat: " + chat.getUserId() + ", " + chat.getTitle());
         entityManager.persist(chat);
-        System.out.println("After persist - Chat ID: " + chat.getId());
 
         return chat.getId();
     }
