@@ -45,9 +45,7 @@ public class ChatController {
 
     @PostMapping("/chat")
     public ResponseEntity<Long> createChat(@RequestBody CreateChatRq createChatRq) {
-        System.out.println("Received create chat request: " + createChatRq.getUserId() + ", " + createChatRq.getTitle());
         long result = chatService.createChat(createChatRq);
-        System.out.println("Created chat with ID: " + result);
         return ResponseEntity.ok(result);
     }
 

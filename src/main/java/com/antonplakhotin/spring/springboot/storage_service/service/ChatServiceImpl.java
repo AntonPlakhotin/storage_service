@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
 
-    private final ChatRepository repository = new ChatRepositoryImpl();
+    private final ChatRepository repository;
 
     @Override
     public Optional<ChatRes> getChat(Long chatId) {
