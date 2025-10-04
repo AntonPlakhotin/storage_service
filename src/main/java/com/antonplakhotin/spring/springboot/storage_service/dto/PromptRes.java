@@ -10,12 +10,8 @@ import lombok.*;
 public class PromptRes {
 
     private long id;
-
     private String title;
-
     private String authorId;
-
     private String description;
-
     private String text;
 }

@@ -85,9 +85,8 @@ public class ChatRepositoryImpl implements ChatRepository {
         if (chat != null) {
             entityManager.remove(chat);
             return true;
-        } else {
-            return false;
         }
+            return false;
     }
 
 }
