@@ -26,21 +26,13 @@ public class PromptController {
     @GetMapping("/prompt/{promptId}")
     public ResponseEntity<PromptRes> getPrompt(@PathVariable long promptId) {
         Optional<PromptRes> prompt = promptService.getPrompt(promptId);
-        if (prompt.isPresent()) {
-            return ResponseEntity.ok(prompt.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return prompt.isPresent() ? ResponseEntity.ok(prompt.get()) : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/prompts")
     public ResponseEntity<List<PromptRes>> getAllPrompts() {
         List<PromptRes> prompts = promptService.getAllPrompts();
-        if (prompts != null) {
-            return ResponseEntity.ok(prompts);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return prompts != null ? ResponseEntity.ok(prompts) : ResponseEntity.notFound().build();
     }
 
     @PostMapping("/prompt")
@@ -52,21 +44,12 @@ public class PromptController {
     @PutMapping("/prompt/{promptId}")
     public HttpStatus editPrompt(@RequestBody PromptRq promptRq, @PathVariable long promptId) {
         boolean result = promptService.editPrompt(promptRq, promptId);
-        if (result) {
-            return HttpStatus.OK;
-        } else {
-            return HttpStatus.BAD_REQUEST;
-        }
+        return  result ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
     }
 
     @DeleteMapping("/prompt/{promptId}")
     public HttpStatus deletePrompt(@PathVariable long promptId) {
         boolean result = promptService.deletePrompt(promptId);
-
-        if (result) {
-            return HttpStatus.NO_CONTENT;
-        } else {
-            return HttpStatus.NOT_FOUND;
-        }
+        return result ? HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND;
     }
 }
