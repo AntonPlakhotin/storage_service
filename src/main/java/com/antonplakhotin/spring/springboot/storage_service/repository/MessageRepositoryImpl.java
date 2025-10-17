@@ -1,10 +1,10 @@
 package com.antonplakhotin.spring.springboot.storage_service.repository;
 
 import com.antonplakhotin.spring.springboot.storage_service.dto.MessageRq;
-import com.antonplakhotin.spring.springboot.storage_service.entity.Chat;
 import com.antonplakhotin.spring.springboot.storage_service.entity.Message;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,10 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+@RequiredArgsConstructor
 public class MessageRepositoryImpl implements MessageRepository {
 
     @PersistenceContext
-   EntityManager entityManager;
+    private EntityManager entityMessageManager;
 
     @Override
     @Transactional
@@ -25,7 +26,7 @@ public class MessageRepositoryImpl implements MessageRepository {
         message.setAuthor(messageRq.getAuthor());
         message.setContent(messageRq.getContent());
 
-        entityManager.persist(message);
+        entityMessageManager.persist(message);
 
         return message.getMessageId();
     }
@@ -39,7 +40,7 @@ public class MessageRepositoryImpl implements MessageRepository {
 
         int maxResults = Math.min(count.intValue(), 1000);
 
-        return entityManager.createQuery(
+        return entityMessageManager.createQuery(
                         "SELECT m FROM Message m WHERE m.chatId = :chatId ORDER BY m.messageId DESC",
                         Message.class)
                 .setParameter("chatId", chatId)
@@ -50,14 +51,14 @@ public class MessageRepositoryImpl implements MessageRepository {
     @Override
     @Transactional
     public List<Message> getAllMessage(long chatId) {
-        return entityManager.createQuery("SELECT m FROM Message m WHERE m.chatId = :chatId", Message.class)
+        return entityMessageManager.createQuery("SELECT m FROM Message m WHERE m.chatId = :chatId", Message.class)
                 .setParameter("chatId", chatId).getResultList();
     }
 
     @Override
     @Transactional
     public boolean deleteMessage(long chatId, long messageId) {
-        Message message = entityManager.createQuery(
+        Message message = entityMessageManager.createQuery(
                         "SELECT m FROM Message m WHERE m.messageId = :messageId AND m.chatId = :chatId",
                         Message.class)
                 .setParameter("messageId", messageId)
@@ -67,7 +68,7 @@ public class MessageRepositoryImpl implements MessageRepository {
                 .orElse(null);
 
         if (message != null) {
-            entityManager.remove(message);
+            entityMessageManager.remove(message);
             return true;
         }
         return false;

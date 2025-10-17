@@ -23,9 +23,9 @@ public class MessageController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/{chatId}/messages")
+    @GetMapping("/{chatId}/last_messages")
     public ResponseEntity<List<MessageRes>> getLastMessages(@PathVariable long chatId,
-                                                            @RequestParam(defaultValue = "50") long count) {
+                                                            @RequestBody long count) {
         List<MessageRes> lastMessages = messageService.getLastMessages(chatId, count);
         return lastMessages != null ? ResponseEntity.ok(lastMessages) : ResponseEntity.notFound().build();
     }
@@ -37,7 +37,8 @@ public class MessageController {
     }
 
     @DeleteMapping("/{chatId}/messages")
-    public HttpStatus deleteMessage(@PathVariable long chatId, @RequestParam long messageId) {
+    public HttpStatus deleteMessage(@PathVariable long chatId,
+                                    @RequestBody long messageId) {
         boolean result = messageService.deleteMessage(chatId, messageId);
         return result ? HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND;
     }

@@ -5,6 +5,7 @@ import com.antonplakhotin.spring.springboot.storage_service.dto.PromptRq;
 import com.antonplakhotin.spring.springboot.storage_service.entity.Prompt;
 import com.antonplakhotin.spring.springboot.storage_service.repository.PromptRepository;
 import com.antonplakhotin.spring.springboot.storage_service.repository.PromptRepositoryImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +14,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PromptServiceImpl implements PromptService {
 
-    @Autowired
-    PromptRepository repository = new PromptRepositoryImpl();
+    private final PromptRepository repository;
 
     @Override
     public Optional<PromptRes> getPrompt(long promptId) {

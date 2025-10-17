@@ -28,6 +28,12 @@ public class ChatController {
         return chatRes.isPresent() ? ResponseEntity.ok(chatRes.get()) : ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/chatPrompt/{chatId}")
+    public ResponseEntity<PromptRes> getPrompt(@PathVariable long chatId) {
+        PromptRes prompt = chatService.getPrompt(chatId);
+        return prompt != null ? ResponseEntity.ok(prompt) : ResponseEntity.notFound().build();
+    }
+
     @GetMapping("/chats/{userId}")
     public ResponseEntity<List<ChatRes>> getAllChats(@PathVariable String userId) {
         List<ChatRes> chats = chatService.getAllChats(userId);

@@ -2,6 +2,7 @@ package com.antonplakhotin.spring.springboot.storage_service.service;
 
 import com.antonplakhotin.spring.springboot.storage_service.dto.*;
 import com.antonplakhotin.spring.springboot.storage_service.entity.Chat;
+import com.antonplakhotin.spring.springboot.storage_service.entity.Prompt;
 import com.antonplakhotin.spring.springboot.storage_service.repository.ChatRepository;
 import com.antonplakhotin.spring.springboot.storage_service.repository.ChatRepositoryImpl;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,21 @@ public class ChatServiceImpl implements ChatService {
                         .title(chat.getTitle())
                         .build()).collect(Collectors.toList());
         return chatResList;
+    }
+
+    @Override
+    public PromptRes getPrompt(Long chatId) {
+        Prompt prompt = repository.getPrompt(chatId);
+        if (prompt == null) {
+            return null;
+        }
+        return PromptRes.builder()
+                .id(prompt.getId())
+                .title(prompt.getTitle())
+                .authorId(prompt.getAuthorId())
+                .description(prompt.getDescription())
+                .text(prompt.getText())
+                .build();
     }
 
     @Override

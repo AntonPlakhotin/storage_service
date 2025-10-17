@@ -5,6 +5,7 @@ import com.antonplakhotin.spring.springboot.storage_service.dto.MessageRq;
 import com.antonplakhotin.spring.springboot.storage_service.entity.Message;
 import com.antonplakhotin.spring.springboot.storage_service.repository.MessageRepository;
 import com.antonplakhotin.spring.springboot.storage_service.repository.MessageRepositoryImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +13,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {
 
-    @Autowired
-    MessageRepository repository = new MessageRepositoryImpl();
+    private final MessageRepository repository;
 
     @Override
     public long createMessage(MessageRq messageRq) {

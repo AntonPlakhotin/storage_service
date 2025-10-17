@@ -18,17 +18,40 @@ import java.util.Optional;
 public class ChatRepositoryImpl implements ChatRepository {
 
     @PersistenceContext
-    private final EntityManager entityManager;
+    private EntityManager entityChatManager;
 
     @Override
     public Optional<Chat> getChat(Long chatId) {
-        return Optional.ofNullable(entityManager.find(Chat.class, chatId));
+        return Optional.ofNullable(entityChatManager.find(Chat.class, chatId));
     }
 
     @Override
     public List<Chat> getAllChats(String userId) {
-        return entityManager.createQuery("SELECT c FROM Chat c WHERE c.userId = :userId", Chat.class)
+        return entityChatManager.createQuery("SELECT c FROM Chat c WHERE c.userId = :userId", Chat.class)
                 .setParameter("userId", userId).getResultList();
+    }
+
+    @Override
+    public Prompt getPrompt(long chatId) {
+        ChatPrompt chatPrompts = entityChatManager.createQuery(
+                        "SELECT cp FROM ChatPrompt cp WHERE cp.chatId = :chatId", ChatPrompt.class)
+                .setParameter("chatId", chatId).getSingleResult();
+
+        if (chatPrompts == null) {
+            System.out.println("No ChatPrompt found for chatId: " + chatId);
+            return null;
+        }
+        Long promptId = chatPrompts.getPromptId();
+        System.out.println("Found promptId: " + promptId + " for chatId: " + chatId);
+        Prompt prompt = entityChatManager.find(Prompt.class, promptId);
+        if (prompt == null) {
+            System.out.println("Prompt not found with id: " + promptId);
+            return null;
+        }
+        System.out.println("Found prompt: " + prompt.getTitle());
+        return prompt;
+        /*ChatPrompt chatPrompt = entityChatManager.find(ChatPrompt.class, chatId);
+        return entityChatManager.find(Prompt.class, chatPrompt.getPromptId());*/
     }
 
     @Override
@@ -38,7 +61,7 @@ public class ChatRepositoryImpl implements ChatRepository {
         chat.setUserId(createChatRq.getUserId());
         chat.setTitle(createChatRq.getTitle());
 
-        entityManager.persist(chat);
+        entityChatManager.persist(chat);
 
         return chat.getId();
     }
@@ -46,12 +69,12 @@ public class ChatRepositoryImpl implements ChatRepository {
     @Override
     @Transactional
     public boolean setPrompt(ChatPromptRq chatPromptRq) {
-        Chat chat = entityManager.find(Chat.class, chatPromptRq.getChatId());
+        Chat chat = entityChatManager.find(Chat.class, chatPromptRq.getChatId());
         if (chat == null) {
             return false;
         }
 
-        Prompt prompt = entityManager.find(Prompt.class, chatPromptRq.getPromptId());
+        Prompt prompt = entityChatManager.find(Prompt.class, chatPromptRq.getPromptId());
         if (prompt == null) {
             return false;
         }
@@ -59,17 +82,15 @@ public class ChatRepositoryImpl implements ChatRepository {
         ChatPrompt chatPrompt = new ChatPrompt();
         chatPrompt.setChatId(chatPromptRq.getChatId());
         chatPrompt.setPromptId(chatPromptRq.getPromptId());
-        entityManager.persist(chatPrompt);
+        entityChatManager.persist(chatPrompt);
 
         return true;
     }
 
-
-
     @Override
     @Transactional
     public boolean renameChat(RenameChatRq renameChatRq) {
-        Chat chat = entityManager.find(Chat.class, renameChatRq.getChatId());
+        Chat chat = entityChatManager.find(Chat.class, renameChatRq.getChatId());
         if (chat != null) {
             chat.setTitle(renameChatRq.getTitle());
             return true;
@@ -81,9 +102,9 @@ public class ChatRepositoryImpl implements ChatRepository {
     @Override
     @Transactional
     public boolean deleteChat(long chatId) {
-        Chat chat = entityManager.find(Chat.class, chatId);
+        Chat chat = entityChatManager.find(Chat.class, chatId);
         if (chat != null) {
-            entityManager.remove(chat);
+            entityChatManager.remove(chat);
             return true;
         }
             return false;

@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "chat")
+@Table(name = "message")
 public class Message {
 
     @Id
@@ -22,6 +22,7 @@ public class Message {
     @Column(name = "chat_id")
     private long chatId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "author")
     private Author author;
 
